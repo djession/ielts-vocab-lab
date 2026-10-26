@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>雅思单词馆 · IELTS Vocab Lab</title>
+<style>
+:root {
+  --bg: #0f1419;
+  --bg2: #1a2332;
+  --card: #243044;
+  --border: #334155;
+  --text: #e8eef7;
+  --muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent2: #60a5fa;
+  --ok: #22c55e;
+  --bad: #ef4444;
+  --warn: #f59e0b;
+  --radius: 14px;
+  --shadow: 0 8px 24px rgba(0,0,0,.35);
+  --font: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100%; }
+a { color: var(--accent2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.wrap { max-width: 960px; margin: 0 auto; padding: 16px; padding-bottom: 88px; }
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(15,20,25,.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner { max-width: 960px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { font-weight: 700; font-size: 1.05rem; color: #fff; white-space: nowrap; }
+.brand span { color: var(--accent2); }
+.nav-links { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+.nav-links a {
+  color: var(--muted); padding: 6px 10px; border-radius: 999px; font-size: .9rem;
+}
+.nav-links a.active, .nav-links a:hover { background: var(--card); color: #fff; text-decoration: none; }
+
+.card {
+  background: linear-gradient(180deg, var(--bg2), #162033);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+}
+.card h2, .card h3 { margin: 0 0 10px; }
+.muted { color: var(--muted); }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.stat { background: var(--card); border-radius: 12px; padding: 14px; border: 1px solid var(--border); }
+.stat .n { font-size: 1.6rem; font-weight: 700; }
+.stat .l { font-size: .85rem; color: var(--muted); }
+
+label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: 4px; }
+input, textarea, select {
+  width: 100%; background: #0b1220; color: var(--text);
+  border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 1rem;
+}
+textarea { min-height: 110px; resize: vertical; font-family: inherit; }
+.field { margin-bottom: 12px; }
+
+.btn {
+  appearance: none; border: none; cursor: pointer;
+  background: var(--accent); color: #fff; font-weight: 600;
+  padding: 10px 16px; border-radius: 10px; font-size: .95rem;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn.ok { background: var(--ok); }
+.btn.bad { background: var(--bad); }
+.btn.warn { background: var(--warn); color: #111; }
+.btn.sm { padding: 6px 10px; font-size: .85rem; }
+
+.pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .75rem; background: var(--card); color: var(--muted); }
+.pill.ok { background: rgba(34,197,94,.15); color: var(--ok); }
+.pill.bad { background: rgba(239,68,68,.15); color: var(--bad); }
+
+.table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.table th, .table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.table th { color: var(--muted); font-weight: 600; }
+
+.q-card { margin-bottom: 16px; }
+.q-prompt { font-size: 1.05rem; margin-bottom: 10px; font-weight: 600; }
+.options { display: grid; gap: 8px; }
+.option {
+  display: block; padding: 12px; border-radius: 10px; border: 1px solid var(--border);
+  background: #0b1220; cursor: pointer;
+}
+.option:has(input:checked) { border-color: var(--accent); background: rgba(59,130,246,.15); }
+.option input { width: auto; margin-right: 8px; }
+
+.result-item { padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border); }
+.result-item.ok { border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.08); }
+.result-item.bad { border-color: rgba(239,68,68,.4); background: rgba(239,68,68,.08); }
+
+.login-box { max-width: 380px; margin: 12vh auto; }
+.score-big { font-size: 2.4rem; font-weight: 800; }
+.bar { height: 10px; background: #0b1220; border-radius: 999px; overflow: hidden; margin-top: 6px; }
+.bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #22c55e); }
+
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: #111827; color: #fff; padding: 10px 16px; border-radius: 10px;
+  border: 1px solid var(--border); z-index: 100; display: none;
+}
+.toast.show { display: block; }
+
+.bottom-nav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  background: rgba(15,20,25,.96); border-top: 1px solid var(--border);
+  display: none; justify-content: space-around; padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+}
+.bottom-nav a { color: var(--muted); font-size: .72rem; text-align: center; padding: 4px; }
+.bottom-nav a.active { color: var(--accent2); }
+.bottom-nav .ico { display: block; font-size: 1.15rem; }
+
+.speak-box {
+  min-height: 120px; background: #0b1220; border: 1px dashed var(--border);
+  border-radius: 12px; padding: 14px; white-space: pre-wrap;
+}
+.rec-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--bad); display: inline-block; animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: .3; } }
+
+@media (max-width: 720px) {
+  .bottom-nav { display: flex; }
+  .nav-links { display: none; }
+}
+
+.hidden{display:none!important}
+.tabbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabbar .btn{background:var(--card);color:var(--muted);border:1px solid var(--border)}
+.tabbar .btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a class="brand" href="#" onclick="show('home')">雅思<span>单词馆</span></a>
+  <div class="nav-links" id="topNav"></div>
+  <button class="btn ghost sm" onclick="logout()">退出</button>
+</div></nav>
+
+<div id="loginView" class="wrap">
+  <div class="card login-box">
+    <h2>雅思单词馆</h2>
+    <p class="muted">IELTS Vocab Lab · 请输入访问码</p>
+    <div class="field"><label>访问码 PIN</label><input id="pin" type="password" placeholder="输入 PIN"/></div>
+    <button class="btn" style="width:100%" onclick="doLogin()">进入</button>
+    <p id="loginErr" style="color:var(--bad)"></p>
+  </div>
+</div>
+
+<main id="appView" class="wrap hidden">
+  <div class="tabbar" id="tabs"></div>
+  <div id="view-home"></div>
+  <div id="view-words" class="hidden"></div>
+  <div id="view-quiz" class="hidden"></div>
+  <div id="view-review" class="hidden"></div>
+  <div id="view-speaking" class="hidden"></div>
+  <div id="view-dash" class="hidden"></div>
+  <div id="view-admin" class="hidden"></div>
+</main>
+
+<nav class="bottom-nav" id="bottomNav"></nav>
+<div class="toast" id="toast"></div>
+
+<script>
+const PIN = "ielts2026";
+const SEED = [{"word": "analyse", "phonetic": "/ˈænəlaɪz/", "definition_en": "to examine something in detail", "definition_cn": "分析；细察", "example": "Researchers analyse the data carefully.", "pos": "v."}, {"word": "approach", "phonetic": "/əˈprəʊtʃ/", "definition_en": "a way of dealing with something; to come near", "definition_cn": "方法；接近", "example": "A new approach to teaching languages.", "pos": "n./v."}, {"word": "assess", "phonetic": "/əˈses/", "definition_en": "to evaluate or estimate the nature or quality of", "definition_cn": "评估；评定", "example": "Teachers assess students' progress regularly.", "pos": "v."}, {"word": "concept", "phonetic": "/ˈkɒnsept/", "definition_en": "an abstract idea or general notion", "definition_cn": "概念；观念", "example": "The concept of democracy is complex.", "pos": "n."}, {"word": "consist", "phonetic": "/kənˈsɪst/", "definition_en": "to be composed or made up of", "definition_cn": "由…组成", "example": "The committee consists of ten members.", "pos": "v."}, {"word": "constitute", "phonetic": "/ˈkɒnstɪtjuːt/", "definition_en": "to be a part of a whole; to form", "definition_cn": "构成；组成", "example": "Women constitute about half of the workforce.", "pos": "v."}, {"word": "context", "phonetic": "/ˈkɒntekst/", "definition_en": "the circumstances that form the setting for an event", "definition_cn": "语境；背景", "example": "You must consider the historical context.", "pos": "n."}, {"word": "distribute", "phonetic": "/dɪˈstrɪbjuːt/", "definition_en": "to give out or spread over an area", "definition_cn": "分发；分配", "example": "The charity distributed food to the poor.", "pos": "v."}, {"word": "economy", "phonetic": "/ɪˈkɒnəmi/", "definition_en": "the system of trade and industry of a country", "definition_cn": "经济；节约", "example": "The global economy is recovering slowly.", "pos": "n."}, {"word": "environment", "phonetic": "/ɪnˈvaɪrənmənt/", "definition_en": "the natural world or surrounding conditions", "definition_cn": "环境", "example": "Protecting the environment is crucial.", "pos": "n."}, {"word": "establish", "phonetic": "/ɪˈstæblɪʃ/", "definition_en": "to set up on a firm or permanent basis", "definition_cn": "建立；确立", "example": "They established a new research centre.", "pos": "v."}, {"word": "estimate", "phonetic": "/ˈestɪmeɪt/", "definition_en": "to roughly calculate or judge the value", "definition_cn": "估计；估价", "example": "Experts estimate the cost at £2 million.", "pos": "v./n."}, {"word": "evidence", "phonetic": "/ˈevɪdəns/", "definition_en": "facts or information indicating whether a belief is true", "definition_cn": "证据；依据", "example": "There is clear evidence of climate change.", "pos": "n."}, {"word": "factor", "phonetic": "/ˈfæktə/", "definition_en": "a circumstance that contributes to a result", "definition_cn": "因素；要素", "example": "Cost was a major factor in their decision.", "pos": "n."}, {"word": "function", "phonetic": "/ˈfʌŋkʃn/", "definition_en": "an activity or purpose natural to something", "definition_cn": "功能；作用", "example": "The function of the heart is to pump blood.", "pos": "n./v."}, {"word": "identify", "phonetic": "/aɪˈdentɪfaɪ/", "definition_en": "to recognize or establish as being a particular person or thing", "definition_cn": "识别；确认", "example": "Can you identify the author of this text?", "pos": "v."}, {"word": "indicate", "phonetic": "/ˈɪndɪkeɪt/", "definition_en": "to point out or show", "definition_cn": "表明；指示", "example": "Recent studies indicate a rise in temperatures.", "pos": "v."}, {"word": "interpret", "phonetic": "/ɪnˈtɜːprɪt/", "definition_en": "to explain the meaning of something", "definition_cn": "解释；口译", "example": "How do you interpret these results?", "pos": "v."}, {"word": "involve", "phonetic": "/ɪnˈvɒlv/", "definition_en": "to include as a necessary part or result", "definition_cn": "涉及；包含", "example": "The job involves a lot of travel.", "pos": "v."}, {"word": "significant", "phonetic": "/sɪɡˈnɪfɪkənt/", "definition_en": "sufficiently great or important to be worthy of attention", "definition_cn": "重要的；显著的", "example": "There has been a significant improvement.", "pos": "adj."}, {"word": "theory", "phonetic": "/ˈθɪəri/", "definition_en": "a system of ideas intended to explain something", "definition_cn": "理论；学说", "example": "Darwin's theory of evolution.", "pos": "n."}, {"word": "variable", "phonetic": "/ˈveəriəbl/", "definition_en": "likely to change; a factor that can change", "definition_cn": "可变的；变量", "example": "Temperature is a key variable in the experiment.", "pos": "n./adj."}];
+const KEY = "ielts_vocab_lab_v1";
+
+const NAV = [
+  ["home","首页"],["words","词库"],["quiz","新词测验"],["review","记忆复习"],
+  ["speaking","口语练习"],["dash","每日评分"],["admin","录入/管理"]
+];
+
+function today(){ return new Date().toISOString().slice(0,10); }
+function now(){ return new Date().toISOString(); }
+function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(t._x); t._x=setTimeout(()=>t.classList.remove("show"),2600); }
+function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c])); }
+
+function load(){
+  const raw = localStorage.getItem(KEY);
+  if(raw){ try { return JSON.parse(raw); } catch(e){} }
+  const db = { words:[], cards:{}, quizzes:[], speaking:[], daily:{}, authed:false };
+  SEED.forEach(w => addWordObj(db, {...w, batch_date:"2026-10-26"}, true));
+  save(db); return db;
+}
+function save(db){ localStorage.setItem(KEY, JSON.stringify(db)); }
+let DB = load();
+
+function addWordObj(db, w, silent){
+  const word = (w.word||"").trim();
+  if(!word) return null;
+  let existing = db.words.find(x => x.word.toLowerCase()===word.toLowerCase());
+  if(existing){
+    Object.assign(existing, { phonetic:w.phonetic||existing.phonetic, definition_en:w.definition_en||existing.definition_en,
+      definition_cn:w.definition_cn||existing.definition_cn, example:w.example||existing.example, pos:w.pos||existing.pos,
+      batch_date:w.batch_date||existing.batch_date });
+    if(!silent) save(db); return existing;
+  }
+  const id = (db.words.reduce((m,x)=>Math.max(m,x.id),0)||0)+1;
+  const obj = { id, word, phonetic:w.phonetic||"", definition_en:w.definition_en||"", definition_cn:w.definition_cn||"",
+    example:w.example||"", pos:w.pos||"", batch_date:w.batch_date||today(), created_at:now() };
+  db.words.push(obj);
+  db.cards[id] = { ease:2.5, interval:0, reps:0, next:today(), last:null };
+  if(!silent) save(db); return obj;
+}
+
+/* SM-2 */
+function sm2(q, reps, ef, interval){
+  q=Math.max(0,Math.min(5,q|0));
+  if(q<3){ reps=0; interval=1; }
+  else {
+    if(reps===0) interval=1; else if(reps===1) interval=6; else interval=Math.max(1, Math.round(interval*ef));
+    reps++;
+  }
+  ef = ef + (0.1 - (5-q)*(0.08+(5-q)*0.02));
+  if(ef<1.3) ef=1.3;
+  return {reps, ef:Math.round(ef*100)/100, interval};
+}
+function nextDate(days){ const d=new Date(); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
+function dueCards(){ return DB.words.filter(w => (DB.cards[w.id]?.next||today()) <= today()); }
+
+function recomputeDaily(day){
+  day=day||today();
+  const qs = DB.quizzes.filter(x=>x.date===day && x.type==="new");
+  const rs = DB.quizzes.filter(x=>x.date===day && x.type==="review");
+  const ss = DB.speaking.filter(x=>x.date===day);
+  const avg = a => a.length? Math.round(a.reduce((s,x)=>s+x.score,0)/a.length*10)/10 : null;
+  const quiz=avg(qs), review=avg(rs), speaking=avg(ss);
+  const parts=[quiz,review,speaking].filter(x=>x!=null);
+  const total = parts.length? Math.round(parts.reduce((a,b)=>a+b,0)/parts.length*10)/10 : null;
+  DB.daily[day]={quiz,review,speaking,total,updated:now()};
+  save(DB);
+}
+
+/* Quiz gen */
+const QTYPES=["mc_en2cn","mc_cn2en","fill_spell","fill_cn2en","fill_en2cn"];
+function distractors(ans, pool, k=3){
+  const o=pool.filter(x=>x&&x!==ans); shuffle(o); return o.slice(0,k);
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function makeQuiz(words, n=15){
+  const all=DB.words; const sel=shuffle(words.slice()).slice(0,n);
+  return sel.map((w,i)=>{
+    const t=QTYPES[i%QTYPES.length];
+    if(t==="mc_en2cn"){
+      const answer=w.definition_cn||w.definition_en||w.word;
+      const opts=shuffle(distractors(answer, all.map(x=>x.definition_cn||x.definition_en||x.word)).concat([answer]));
+      return {type:t,word_id:w.id,word:w.word,prompt:`选择 “${w.word}” 的中文释义`,options:opts,answer,hint:w.phonetic||""};
+    }
+    if(t==="mc_cn2en"){
+      const answer=w.word;
+      const opts=shuffle(distractors(answer, all.map(x=>x.word)).concat([answer]));
+      return {type:t,word_id:w.id,word:w.word,prompt:`选择与 “${w.definition_cn||w.definition_en}” 对应的英文单词`,options:opts,answer,hint:w.pos||""};
+    }
+    if(t==="fill_spell"){
+      const letters=shuffle(w.word.split(""));
+      return {type:t,word_id:w.id,word:w.word,prompt:`根据释义拼写单词：${w.definition_cn||w.definition_en}`,answer:w.word,hint:`音标 ${w.phonetic||"—"} · 乱序 ${letters.join(" ")}`};
+    }
+    if(t==="fill_cn2en"){
+      return {type:t,word_id:w.id,word:w.word,prompt:`写出英文：${w.definition_cn||w.definition_en}`,answer:w.word,hint:`${w.pos||""} ${w.phonetic||""}`};
+    }
+    return {type:t,word_id:w.id,word:w.word,prompt:`写出 “${w.word}” 的中文释义`,answer:w.definition_cn||w.definition_en||"",hint:w.example||""};
+  });
+}
+function grade(q, ua){
+  ua=(ua||"").trim(); const correct=(q.answer||"").trim(); let ok=false; let fb="";
+  if(q.type.startsWith("mc")||q.type==="fill_spell"||q.type==="fill_cn2en"){
+    ok=ua.toLowerCase()===correct.toLowerCase();
+    fb=ok?"正确！":`正确答案：${correct}`;
+  } else {
+    if(!ua) ok=false;
+    else if(ua.toLowerCase()===correct.toLowerCase() || (correct && (correct.includes(ua)||ua.includes(correct)))) ok=true;
+    else {
+      const tokens=correct.replace(/[；;，,/]/g,",").split(",").map(s=>s.trim()).filter(Boolean);
+      ok=tokens.some(t=>ua.includes(t));
+    }
+    fb=ok?"释义正确！":`参考释义：${correct}`;
+  }
+  return {word_id:q.word_id,word:q.word,type:q.type,prompt:q.prompt,user_answer:ua,correct_answer:correct,is_correct:ok,feedback:fb};
+}
+function applyReview(word_id, quality){
+  const c=DB.cards[word_id]; if(!c) return;
+  const u=sm2(quality,c.reps,c.ease,c.interval);
+  c.reps=u.reps; c.ease=u.ef; c.interval=u.interval; c.next=nextDate(u.interval); c.last=today();
+}
+
+function doLogin(){
+  const p=document.getElementById("pin").value.trim();
+  if(p!==PIN){ document.getElementById("loginErr").textContent="访问码错误"; return; }
+  DB.authed=true; save(DB); enterApp();
+}
+function logout(){ DB.authed=false; save(DB); location.reload(); }
+
+function enterApp(){
+  document.getElementById("loginView").classList.add("hidden");
+  document.getElementById("appView").classList.remove("hidden");
+  const tabs=document.getElementById("tabs");
+  const top=document.getElementById("topNav");
+  const bot=document.getElementById("bottomNav");
+  tabs.innerHTML=NAV.map(([k,l])=>`<button class="btn sm" data-v="${k}">${l}</button>`).join("");
+  top.innerHTML=NAV.map(([k,l])=>`<a href="#" data-v="${k}">${l}</a>`).join("");
+  bot.innerHTML=`
+    <a href="#" data-v="home"><span class="ico">🏠</span>首页</a>
+    <a href="#" data-v="quiz"><span class="ico">📝</span>测验</a>
+    <a href="#" data-v="review"><span class="ico">🔁</span>复习</a>
+    <a href="#" data-v="speaking"><span class="ico">🎤</span>口语</a>
+    <a href="#" data-v="dash"><span class="ico">📊</span>评分</a>`;
+  document.querySelectorAll("[data-v]").forEach(el=>el.onclick=e=>{e.preventDefault(); show(el.dataset.v);});
+  show("home");
+}
+
+function show(name){
+  NAV.forEach(([k])=>{
+    const v=document.getElementById("view-"+k); if(v) v.classList.toggle("hidden", k!==name);
+  });
+  document.querySelectorAll("#tabs .btn").forEach(b=>b.classList.toggle("on", b.dataset.v===name));
+  document.querySelectorAll("#topNav a").forEach(a=>a.classList.toggle("active", a.dataset.v===name));
+  document.querySelectorAll("#bottomNav a").forEach(a=>a.classList.toggle("active", a.dataset.v===name));
+  ({home:renderHome,words:renderWords,quiz:renderQuiz,review:renderReview,speaking:renderSpeaking,dash:renderDash,admin:renderAdmin})[name]();
+}
+
+function renderHome(){
+  const d=DB.daily[today()]||{};
+  document.getElementById("view-home").innerHTML=`
+  <div class="card"><h2>今日学习概览</h2><p class="muted">日期：${today()}</p>
+  <div class="grid">
+    <div class="stat"><div class="n">${DB.words.length}</div><div class="l">词库总量</div></div>
+    <div class="stat"><div class="n">${DB.words.filter(w=>w.batch_date===today()).length}</div><div class="l">今日新词</div></div>
+    <div class="stat"><div class="n">${dueCards().length}</div><div class="l">待复习</div></div>
+    <div class="stat"><div class="n">${d.total??"—"}</div><div class="l">今日综合分</div></div>
+  </div></div>
+  <div class="card"><h3>快捷入口</h3><div class="row">
+    <button class="btn" onclick="show('quiz')">开始新词测验</button>
+    <button class="btn warn" onclick="show('review')">记忆曲线复习</button>
+    <button class="btn ok" onclick="show('speaking')">口语对话练习</button>
+    <button class="btn ghost" onclick="show('admin')">录入今日单词</button>
+  </div></div>
+  <div class="card"><h3>使用说明</h3>
+  <ol class="muted" style="line-height:1.7">
+    <li>在「录入/管理」添加或批量导入今日单词。</li>
+    <li>做「新词测验」巩固当天内容，交卷后自动评分批阅。</li>
+    <li>按 SM-2 记忆曲线做「记忆复习」，只考到期卡片。</li>
+    <li>「口语练习」围绕目标词开口说（建议 Chrome/Edge），系统会指出语法/发音问题。</li>
+    <li>在「每日评分」查看综合得分与历史。</li>
+  </ol></div>`;
+}
+
+function renderWords(){
+  const rows=DB.words.slice().reverse().map(w=>{
+    const c=DB.cards[w.id]||{};
+    return `<tr><td><strong>${esc(w.word)}</strong></td><td class="muted">${esc(w.phonetic)}</td><td>${esc(w.pos)}</td><td>${esc(w.definition_cn)}</td><td>${esc(w.batch_date||"")}</td><td>${esc(c.next||"")}</td></tr>`;
+  }).join("");
+  document.getElementById("view-words").innerHTML=`<div class="card"><h2>词库</h2><p class="muted">共 ${DB.words.length} 个单词（保存在本机浏览器）</p>
+  <div style="overflow:auto"><table class="table"><thead><tr><th>单词</th><th>音标</th><th>词性</th><th>中文</th><th>批次</th><th>下次复习</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+let quizState=null;
+function renderQuiz(){
+  document.getElementById("view-quiz").innerHTML=`
+  <div class="card" id="qsetup"><h2>新词专项测验</h2>
+  <p class="muted">选择题 / 拼写 / 中英互译，交卷后评分批阅。</p>
+  <div class="row">
+    <div class="field" style="flex:1"><label>批次日期</label><input id="qbatch" type="date" value="${today()}"/></div>
+    <div class="field" style="width:120px"><label>题量</label><select id="qn"><option>10</option><option selected>15</option><option>20</option></select></div>
+  </div>
+  <button class="btn" onclick="startQuiz('new')">开始测验</button></div>
+  <div class="card hidden" id="qexam"></div>
+  <div class="card hidden" id="qresult"></div>`;
+}
+function startQuiz(kind){
+  let words;
+  if(kind==="new"){
+    const batch=document.getElementById("qbatch").value;
+    const n=+document.getElementById("qn").value;
+    words=DB.words.filter(w=>w.batch_date===batch);
+    if(!words.length) words=DB.words.slice(-n);
+    quizState={kind, questions:makeQuiz(words,n)};
+  } else {
+    words=dueCards();
+    if(!words.length){ toast("今天没有到期需要复习的单词"); return; }
+    quizState={kind, questions:makeQuiz(words,15)};
+  }
+  if(!quizState.questions.length){ toast("没有可考单词"); return; }
+  document.getElementById("qsetup")?.classList.add("hidden");
+  document.getElementById("rsetup")?.classList.add("hidden");
+  const box=document.getElementById(kind==="new"?"qexam":"rexam");
+  box.classList.remove("hidden");
+  box.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">答题中</h2><span class="pill">${quizState.questions.length} 题</span></div>
+    <div id="qlist"></div><button class="btn" onclick="submitQuiz()">交卷评分</button>`;
+  document.getElementById("qlist").innerHTML=quizState.questions.map((q,i)=>{
+    let body=q.type.startsWith("mc")
+      ? `<div class="options">${q.options.map(o=>`<label class="option"><input type="radio" name="q${i}" value="${esc(o)}"/> ${esc(o)}</label>`).join("")}</div>`
+      : `<input name="q${i}" placeholder="输入答案" autocomplete="off"/>`;
+    return `<div class="q-card card" style="margin:12px 0;box-shadow:none"><div class="q-prompt">${i+1}. ${esc(q.prompt)}</div>
+      <div class="muted" style="margin-bottom:8px;font-size:.85rem">${esc(q.hint||"")}</div>${body}</div>`;
+  }).join("");
+}
+function submitQuiz(){
+  const results=quizState.questions.map((q,i)=>{
+    let ua="";
+    if(q.type.startsWith("mc")){ const el=document.querySelector(`input[name="q${i}"]:checked`); ua=el?el.value:""; }
+    else { const el=document.querySelector(`input[name="q${i}"]`); ua=el?el.value:""; }
+    const g=grade(q,ua);
+    applyReview(g.word_id, g.is_correct?4:1);
+    return g;
+  });
+  const correct=results.filter(r=>r.is_correct).length;
+  const score=results.length? Math.round(1000*correct/results.length)/10 : 0;
+  const wrong=results.filter(r=>!r.is_correct).map(r=>r.word).slice(0,8).join("、");
+  let summary=score>=90?"表现优秀！继续保持。":score>=70?"不错，还有提升空间。":score>=50?"基础尚可，建议重点复习错题。":"需要加强记忆，建议今天多复习错词。";
+  if(wrong) summary+=` 错词：${wrong}。`;
+  DB.quizzes.unshift({id:Date.now(),date:today(),type:quizState.kind,score,total:results.length,correct,results,created:now()});
+  recomputeDaily();
+  const resId=quizState.kind==="new"?"qresult":"rresult";
+  const examId=quizState.kind==="new"?"qexam":"rexam";
+  document.getElementById(examId).classList.add("hidden");
+  const box=document.getElementById(resId); box.classList.remove("hidden");
+  box.innerHTML=`<h2>批阅结果</h2><div class="score-big">${score} 分</div>
+    <p class="muted">${correct}/${results.length} 正确 · ${esc(summary)}</p>
+    ${results.map(x=>`<div class="result-item ${x.is_correct?"ok":"bad"}"><strong>${esc(x.word)}</strong>
+      <span class="pill ${x.is_correct?"ok":"bad"}">${x.is_correct?"正确":"错误"}</span>
+      <div class="muted">你的答案：${esc(x.user_answer)||"（空）"}</div><div>${esc(x.feedback)}</div></div>`).join("")}
+    <div class="row" style="margin-top:12px"><button class="btn ghost" onclick="show('${quizState.kind==="new"?"quiz":"review"}')">再测一次</button>
+    <button class="btn" onclick="show('dash')">查看每日评分</button></div>`;
+  toast("成绩已计入今日综合分");
+}
+
+function renderReview(){
+  document.getElementById("view-review").innerHTML=`
+  <div class="card" id="rsetup"><h2>记忆曲线复习（SM-2）</h2>
+  <p class="muted">只抽到期卡片。答对拉长间隔，答错尽快再现。</p>
+  <p class="muted">当前到期：${dueCards().length} 张</p>
+  <button class="btn warn" onclick="startQuiz('review')">开始复习</button></div>
+  <div class="card hidden" id="rexam"></div>
+  <div class="card hidden" id="rresult"></div>`;
+}
+
+/* Speaking */
+let sp={prompts:[],words:[],cur:0,rec:null,recognizing:false,conf:null,mismatches:[]};
+function renderSpeaking(){
+  document.getElementById("view-speaking").innerHTML=`
+  <div class="card"><h2>口语对话练习</h2>
+  <p class="muted">围绕今日/到期单词开口说。使用浏览器 Web Speech API（建议 Chrome/Edge）。</p>
+  <button class="btn" onclick="loadSpeaking()">加载练习题</button>
+  <button class="btn ghost" onclick="speakPrompt()">朗读题目（英文）</button></div>
+  <div class="card hidden" id="spCard"></div>
+  <div class="card hidden" id="spResult"></div>`;
+}
+function loadSpeaking(){
+  let words=DB.words.filter(w=>w.batch_date===today());
+  if(words.length<3) words=dueCards().slice(0,5);
+  if(!words.length) words=DB.words.slice(0,5);
+  words=words.slice(0,5);
+  sp.words=words.map(w=>w.word);
+  sp.prompts=words.map(w=>({
+    word:w.word, phonetic:w.phonetic, definition_cn:w.definition_cn,
+    prompt_zh:`请用英文回答，并尽量使用单词 “${w.word}”：这个词在学习/工作/生活中为什么重要？请举一个例子。`,
+    prompt_en:`Explain why '${w.word}' is important in study or work, and give one example. Use the word naturally.`
+  }));
+  sp.cur=0; showSpPrompt();
+  document.getElementById("spCard").classList.remove("hidden");
+  document.getElementById("spResult").classList.add("hidden");
+}
+function showSpPrompt(){
+  const p=sp.prompts[sp.cur];
+  document.getElementById("spCard").innerHTML=`
+  <h3>当前题目 <span class="pill">${sp.cur+1}/${sp.prompts.length}</span></h3>
+  <p><strong>${esc(p.word)}</strong> <span class="muted">${esc(p.phonetic||"")}</span></p>
+  <p class="muted">${esc(p.definition_cn||"")}</p>
+  <p>${esc(p.prompt_zh)}</p>
+  <p class="muted">${esc(p.prompt_en)}</p>
+  <div class="row">
+    <button class="btn ok" id="btnRec" onclick="startRec()">🎤 开始说话</button>
+    <button class="btn ghost" id="btnStop" disabled onclick="stopRec()">停止</button>
+    <button class="btn ghost" onclick="sp.cur=(sp.cur+1)%sp.prompts.length;showSpPrompt()">下一题</button>
+  </div>
+  <p class="muted" id="recStatus" style="margin-top:8px"></p>
+  <div class="speak-box" id="transcript" contenteditable="true"></div>
+  <p class="muted" style="font-size:.85rem">也可手动修改识别文本后再提交。</p>
+  <button class="btn" onclick="gradeSpeaking()">提交口语批阅</button>`;
+  sp.conf=null; sp.mismatches=[];
+}
+function speakPrompt(){
+  if(!sp.prompts.length) return;
+  const p=sp.prompts[sp.cur];
+  const u=new SpeechSynthesisUtterance(p.prompt_en+" Target word: "+p.word);
+  u.lang="en-US"; speechSynthesis.speak(u);
+}
+function startRec(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ toast("当前浏览器不支持语音识别，请用 Chrome/Edge，或直接打字"); document.getElementById("transcript").focus(); return; }
+  sp.rec=new SR(); sp.rec.lang="en-US"; sp.rec.continuous=true; sp.rec.interimResults=true;
+  let finalText=document.getElementById("transcript").textContent||"";
+  sp.rec.onstart=()=>{ sp.recognizing=true; document.getElementById("btnRec").disabled=true; document.getElementById("btnStop").disabled=false;
+    document.getElementById("recStatus").innerHTML='<span class="rec-dot"></span> 正在聆听…'; };
+  sp.rec.onend=()=>{ sp.recognizing=false; document.getElementById("btnRec").disabled=false; document.getElementById("btnStop").disabled=true;
+    document.getElementById("recStatus").textContent="已停止。可修改文本后提交。"; };
+  sp.rec.onerror=e=>{ document.getElementById("recStatus").textContent="识别错误："+(e.error||""); };
+  sp.rec.onresult=ev=>{
+    let interim="";
+    for(let i=ev.resultIndex;i<ev.results.length;i++){
+      const res=ev.results[i], t=res[0].transcript;
+      if(res.isFinal){
+        finalText+=(finalText?" ":"")+t.trim();
+        if(typeof res[0].confidence==="number")
+          sp.conf = sp.conf==null?res[0].confidence:(sp.conf+res[0].confidence)/2;
+        const tw=(sp.prompts[sp.cur]?.word||"").toLowerCase();
+        if(tw && !t.toLowerCase().includes(tw) && sp.conf!=null && sp.conf<0.7){
+          if(!sp.mismatches.includes(sp.prompts[sp.cur].word)) sp.mismatches.push(sp.prompts[sp.cur].word);
+        }
+      } else interim+=t;
+    }
+    document.getElementById("transcript").textContent=(finalText+(interim?" "+interim:"")).trim();
+  };
+  sp.rec.start();
+}
+function stopRec(){ if(sp.rec&&sp.recognizing) sp.rec.stop(); }
+
+const GRAM=[
+  [/\bi am go\b/i,"应为 I am going / I go"],
+  [/\bhe go\b/i,"第三人称单数：he goes"],
+  [/\bshe go\b/i,"第三人称单数：she goes"],
+  [/\bmore better\b/i,"better 已是比较级，勿再加 more"],
+  [/\bin nowadays\b/i,"nowadays 前通常不加 in"],
+  [/\bdiscuss about\b/i,"discuss 后直接接宾语，去掉 about"],
+  [/\binformations\b/i,"information 不可数"],
+  [/\badvices\b/i,"advice 不可数"],
+  [/\bi has\b/i,"应为 I have"],
+  [/\bthey was\b/i,"应为 they were"],
+  [/\bthere is many\b/i,"many 后用 there are"],
+];
+function gradeSpeaking(){
+  stopRec();
+  const text=(document.getElementById("transcript").textContent||"").trim();
+  if(!text){ toast("请先说话或输入英文"); return; }
+  const fb=[]; const lower=text.toLowerCase();
+  GRAM.forEach(([re,msg])=>{ if(re.test(text)) fb.push({type:"grammar",zh:"语法："+msg}); });
+  const used=[], missing=[];
+  sp.words.forEach(w=>{ if(lower.includes(w.toLowerCase())) used.push(w); else missing.push(w); });
+  if(missing.length) fb.push({type:"vocab",zh:"词汇：尽量用上这些词 — "+missing.join(", ")});
+  if(sp.conf!=null && sp.conf<0.55) fb.push({type:"pronunciation",zh:"发音：识别不太稳定，请放慢语速、吐字更清晰后再试"});
+  if(sp.mismatches.length) fb.push({type:"pronunciation",zh:"发音：这些词可能读得不准 — "+sp.mismatches.join(", ")});
+  if(!fb.length) fb.push({type:"ok",zh:"很好！未发现明显语法/发音问题。"});
+  const vocab=sp.words.length? 100*used.length/sp.words.length : 70;
+  const gpen=Math.min(40, 8*fb.filter(f=>f.type==="grammar").length);
+  const ppen=Math.min(30, 10*fb.filter(f=>f.type==="pronunciation").length);
+  const len=text.split(/\\s+/).length>=20?10:(text.split(/\\s+/).length>=8?5:0);
+  const score=Math.max(0,Math.min(100, Math.round((vocab-gpen-ppen+len)*10)/10));
+  DB.speaking.unshift({id:Date.now(),date:today(),score,transcript:text,feedback:fb,words:sp.words.join(","),created:now()});
+  recomputeDaily();
+  document.getElementById("spResult").classList.remove("hidden");
+  document.getElementById("spResult").innerHTML=`<h2>本轮口语评分</h2><div class="score-big">${score} 分</div>
+    <p>已使用目标词：${esc(used.join(", ")||"无")}</p>
+    <p>未使用：${esc(missing.join(", ")||"无")}</p>
+    ${fb.map(f=>`<div class="result-item ${f.type==="ok"?"ok":"bad"}">${esc(f.zh)}</div>`).join("")}
+    <div class="row" style="margin-top:12px"><button class="btn ghost" onclick="loadSpeaking()">继续练习</button>
+    <button class="btn" onclick="show('dash')">每日评分</button></div>`;
+  toast("口语评分已计入今日综合分");
+}
+
+function renderDash(){
+  const d=DB.daily[today()]||{};
+  const hist=Object.keys(DB.daily).sort().reverse().slice(0,30).map(k=>{
+    const x=DB.daily[k];
+    return `<tr><td>${k}</td><td>${x.quiz??"—"}</td><td>${x.review??"—"}</td><td>${x.speaking??"—"}</td><td><strong>${x.total??"—"}</strong></td></tr>`;
+  }).join("")||`<tr><td colspan="5">暂无记录</td></tr>`;
+  document.getElementById("view-dash").innerHTML=`
+  <div class="card"><h2>今日综合评分</h2><p class="muted">${today()}</p>
+  <div class="grid">
+    <div class="stat"><div class="n">${d.quiz??"—"}</div><div class="l">新词测验</div></div>
+    <div class="stat"><div class="n">${d.review??"—"}</div><div class="l">记忆复习</div></div>
+    <div class="stat"><div class="n">${d.speaking??"—"}</div><div class="l">口语练习</div></div>
+    <div class="stat"><div class="n">${d.total??"—"}</div><div class="l">综合分</div></div>
+  </div>
+  <div style="margin-top:14px"><div class="muted">综合分进度</div><div class="bar"><i style="width:${Math.min(100,d.total||0)}%"></i></div></div></div>
+  <div class="card"><h3>近 30 日趋势</h3><div style="overflow:auto"><table class="table"><thead><tr><th>日期</th><th>新词</th><th>复习</th><th>口语</th><th>综合</th></tr></thead><tbody>${hist}</tbody></table></div></div>
+  <div class="card"><h3>最近测验</h3>${DB.quizzes.slice(0,8).map(q=>`<div>${esc(q.created)} · ${q.type==="new"?"新词":"复习"} · <strong>${q.score}</strong> 分（${q.correct}/${q.total}）</div>`).join("")||"暂无"}</div>
+  <div class="card"><h3>最近口语</h3>${DB.speaking.slice(0,8).map(q=>`<div>${esc(q.created)} · <strong>${q.score}</strong> 分 · 词：${esc(q.words||"")}</div>`).join("")||"暂无"}</div>`;
+}
+
+function renderAdmin(){
+  document.getElementById("view-admin").innerHTML=`
+  <div class="card"><h2>添加单词</h2>
+  <div class="grid">
+    <div class="field"><label>单词 *</label><input id="aw"/></div>
+    <div class="field"><label>音标</label><input id="aph"/></div>
+    <div class="field"><label>词性</label><input id="apos"/></div>
+    <div class="field"><label>批次日期</label><input id="abatch" type="date" value="${today()}"/></div>
+  </div>
+  <div class="field"><label>中文释义</label><input id="acn"/></div>
+  <div class="field"><label>英文释义</label><input id="aen"/></div>
+  <div class="field"><label>例句</label><input id="aex"/></div>
+  <button class="btn" onclick="adminAdd()">保存单词</button></div>
+  <div class="card"><h3>批量导入</h3>
+  <p class="muted">每行：<code>word | 中文</code> 或 <code>word | phonetic | 中文 | 英文 | pos | example</code></p>
+  <div class="field"><label>批次日期</label><input id="bbatch" type="date" value="${today()}"/></div>
+  <div class="field"><textarea id="bulk" placeholder="analyse | 分析"></textarea></div>
+  <button class="btn" onclick="adminImport()">导入</button></div>
+  <div class="card"><h3>最近单词</h3>
+  <div style="overflow:auto"><table class="table"><thead><tr><th>单词</th><th>中文</th><th>批次</th><th></th></tr></thead>
+  <tbody>${DB.words.slice().reverse().slice(0,40).map(w=>`<tr><td><strong>${esc(w.word)}</strong></td><td>${esc(w.definition_cn)}</td><td>${esc(w.batch_date||"")}</td>
+  <td><button class="btn bad sm" onclick="adminDel(${w.id})">删除</button></td></tr>`).join("")}</tbody></table></div></div>`;
+}
+function adminAdd(){
+  const w=document.getElementById("aw").value;
+  if(!w.trim()){ toast("请填写单词"); return; }
+  addWordObj(DB,{ word:w, phonetic:document.getElementById("aph").value, pos:document.getElementById("apos").value,
+    definition_cn:document.getElementById("acn").value, definition_en:document.getElementById("aen").value,
+    example:document.getElementById("aex").value, batch_date:document.getElementById("abatch").value||today()});
+  toast("已保存"); renderAdmin();
+}
+function adminImport(){
+  const batch=document.getElementById("bbatch").value||today();
+  let added=0, updated=0;
+  document.getElementById("bulk").value.split("
+").forEach(line=>{
+    line=line.trim(); if(!line||line.startsWith("#")) return;
+    const parts=line.split("|").map(s=>s.trim());
+    const before=DB.words.some(w=>w.word.toLowerCase()===parts[0].toLowerCase());
+    if(parts.length===1) addWordObj(DB,{word:parts[0],batch_date:batch});
+    else if(parts.length===2) addWordObj(DB,{word:parts[0],definition_cn:parts[1],batch_date:batch});
+    else addWordObj(DB,{word:parts[0],phonetic:parts[1]||"",definition_cn:parts[2]||"",definition_en:parts[3]||"",pos:parts[4]||"",example:parts[5]||"",batch_date:batch});
+    if(before) updated++; else added++;
+  });
+  toast(`导入完成：新增 ${added}，更新 ${updated}`); renderAdmin();
+}
+function adminDel(id){
+  if(!confirm("确认删除？")) return;
+  DB.words=DB.words.filter(w=>w.id!==id); delete DB.cards[id]; save(DB); toast("已删除"); renderAdmin();
+}
+
+document.getElementById("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") doLogin(); });
+if(DB.authed) enterApp();
+</script>
+</body>
+</html>
