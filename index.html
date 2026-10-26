@@ -296,7 +296,7 @@ function applyReview(word_id, quality){
 function doLogin(){
   const p=document.getElementById("pin").value.trim();
   if(p!==PIN){ document.getElementById("loginErr").textContent="访问码错误"; return; }
-  DB.authed=true; save(DB); enterApp();
+  DB.authed=true; save(DB); enterApp(); syncRemoteWords();
 }
 function logout(){ DB.authed=false; save(DB); location.reload(); }
 
@@ -639,7 +639,35 @@ function adminDel(id){
 }
 
 document.getElementById("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") doLogin(); });
-if(DB.authed) enterApp();
+
+async function syncRemoteWords(){
+  try {
+    const base = (location.href.split('?')[0]).replace(/index\.html$/, '');
+    const urls = [
+      base + 'words.json',
+      'https://cdn.jsdelivr.net/gh/djession/ielts-vocab-lab@main/words.json',
+      'https://raw.githubusercontent.com/djession/ielts-vocab-lab/main/words.json'
+    ];
+    let items=null;
+    for (const u of urls){
+      try {
+        const r = await fetch(u + (u.includes('jsdelivr')||u.includes('githubusercontent') ? ('?t='+Date.now()) : ''), {cache:'no-store'});
+        if(r.ok){ items = await r.json(); break; }
+      } catch(e){}
+    }
+    if(!Array.isArray(items) || !items.length) return;
+    let n=0;
+    items.forEach(w=>{
+      const before = DB.words.some(x=>x.word.toLowerCase()===String(w.word||'').toLowerCase());
+      addWordObj(DB, w, true);
+      if(!before) n++;
+    });
+    save(DB);
+    if(n) toast('已从词库同步 '+n+' 个新词');
+  } catch(e){}
+}
+
+if(DB.authed){ enterApp(); syncRemoteWords().then(()=>{ try{renderHome()}catch(e){} }); } else { syncRemoteWords(); }
 </script>
 </body>
 </html>

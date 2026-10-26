@@ -1,0 +1,209 @@
+[
+  {
+    "word": "criterion",
+    "phonetic": "/kraɪˈtɪəriən/",
+    "definition_cn": "标准；准则",
+    "definition_en": "a standard by which something is judged",
+    "example": "One criterion is accuracy.",
+    "pos": "n.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "variable",
+    "phonetic": "/ˈveəriəbl/",
+    "definition_cn": "可变的；变量",
+    "definition_en": "likely to change; a factor that can change",
+    "example": "Temperature is a key variable in the experiment.",
+    "pos": "n./adj.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "theory",
+    "phonetic": "/ˈθɪəri/",
+    "definition_cn": "理论；学说",
+    "definition_en": "a system of ideas intended to explain something",
+    "example": "Darwin's theory of evolution.",
+    "pos": "n.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "significant",
+    "phonetic": "/sɪɡˈnɪfɪkənt/",
+    "definition_cn": "重要的；显著的",
+    "definition_en": "sufficiently great or important to be worthy of attention",
+    "example": "There has been a significant improvement.",
+    "pos": "adj.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "involve",
+    "phonetic": "/ɪnˈvɒlv/",
+    "definition_cn": "涉及；包含",
+    "definition_en": "to include as a necessary part or result",
+    "example": "The job involves a lot of travel.",
+    "pos": "v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "interpret",
+    "phonetic": "/ɪnˈtɜːprɪt/",
+    "definition_cn": "解释；口译",
+    "definition_en": "to explain the meaning of something",
+    "example": "How do you interpret these results?",
+    "pos": "v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "indicate",
+    "phonetic": "/ˈɪndɪkeɪt/",
+    "definition_cn": "表明；指示",
+    "definition_en": "to point out or show",
+    "example": "Recent studies indicate a rise in temperatures.",
+    "pos": "v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "identify",
+    "phonetic": "/aɪˈdentɪfaɪ/",
+    "definition_cn": "识别；确认",
+    "definition_en": "to recognize or establish as being a particular person or thing",
+    "example": "Can you identify the author of this text?",
+    "pos": "v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "function",
+    "phonetic": "/ˈfʌŋkʃn/",
+    "definition_cn": "功能；作用",
+    "definition_en": "an activity or purpose natural to something",
+    "example": "The function of the heart is to pump blood.",
+    "pos": "n./v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "factor",
+    "phonetic": "/ˈfæktə/",
+    "definition_cn": "因素；要素",
+    "definition_en": "a circumstance that contributes to a result",
+    "example": "Cost was a major factor in their decision.",
+    "pos": "n.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "evidence",
+    "phonetic": "/ˈevɪdəns/",
+    "definition_cn": "证据；依据",
+    "definition_en": "facts or information indicating whether a belief is true",
+    "example": "There is clear evidence of climate change.",
+    "pos": "n.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "estimate",
+    "phonetic": "/ˈestɪmeɪt/",
+    "definition_cn": "估计；估价",
+    "definition_en": "to roughly calculate or judge the value",
+    "example": "Experts estimate the cost at £2 million.",
+    "pos": "v./n.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "establish",
+    "phonetic": "/ɪˈstæblɪʃ/",
+    "definition_cn": "建立；确立",
+    "definition_en": "to set up on a firm or permanent basis",
+    "example": "They established a new research centre.",
+    "pos": "v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "environment",
+    "phonetic": "/ɪnˈvaɪrənmənt/",
+    "definition_cn": "环境",
+    "definition_en": "the natural world or surrounding conditions",
+    "example": "Protecting the environment is crucial.",
+    "pos": "n.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "economy",
+    "phonetic": "/ɪˈkɒnəmi/",
+    "definition_cn": "经济；节约",
+    "definition_en": "the system of trade and industry of a country",
+    "example": "The global economy is recovering slowly.",
+    "pos": "n.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "distribute",
+    "phonetic": "/dɪˈstrɪbjuːt/",
+    "definition_cn": "分发；分配",
+    "definition_en": "to give out or spread over an area",
+    "example": "The charity distributed food to the poor.",
+    "pos": "v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "context",
+    "phonetic": "/ˈkɒntekst/",
+    "definition_cn": "语境；背景",
+    "definition_en": "the circumstances that form the setting for an event",
+    "example": "You must consider the historical context.",
+    "pos": "n.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "constitute",
+    "phonetic": "/ˈkɒnstɪtjuːt/",
+    "definition_cn": "构成；组成",
+    "definition_en": "to be a part of a whole; to form",
+    "example": "Women constitute about half of the workforce.",
+    "pos": "v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "consist",
+    "phonetic": "/kənˈsɪst/",
+    "definition_cn": "由…组成",
+    "definition_en": "to be composed or made up of",
+    "example": "The committee consists of ten members.",
+    "pos": "v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "concept",
+    "phonetic": "/ˈkɒnsept/",
+    "definition_cn": "概念；观念",
+    "definition_en": "an abstract idea or general notion",
+    "example": "The concept of democracy is complex.",
+    "pos": "n.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "assess",
+    "phonetic": "/əˈses/",
+    "definition_cn": "评估；评定",
+    "definition_en": "to evaluate or estimate the nature or quality of",
+    "example": "Teachers assess students' progress regularly.",
+    "pos": "v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "approach",
+    "phonetic": "/əˈprəʊtʃ/",
+    "definition_cn": "方法；接近",
+    "definition_en": "a way of dealing with something; to come near",
+    "example": "A new approach to teaching languages.",
+    "pos": "n./v.",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "analyse",
+    "phonetic": "/ˈænəlaɪz/",
+    "definition_cn": "分析；细察",
+    "definition_en": "to examine something in detail",
+    "example": "Researchers analyse the data carefully.",
+    "pos": "v.",
+    "batch_date": "2026-10-26"
+  }
+]
