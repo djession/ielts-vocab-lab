@@ -164,7 +164,7 @@ textarea { min-height: 110px; resize: vertical; font-family: inherit; }
   <div id="view-review" class="hidden"></div>
   <div id="view-speaking" class="hidden"></div>
   <div id="view-dash" class="hidden"></div>
-  <div id="view-admin" class="hidden"></div>
+  
 </main>
 
 <nav class="bottom-nav" id="bottomNav"></nav>
@@ -177,7 +177,7 @@ const KEY = "ielts_vocab_lab_v1";
 
 const NAV = [
   ["home","首页"],["words","词库"],["quiz","新词测验"],["review","记忆复习"],
-  ["speaking","口语练习"],["dash","每日评分"],["admin","录入/管理"]
+  ["speaking","口语练习"],["dash","每日评分"]
 ];
 
 function today(){ return new Date().toISOString().slice(0,10); }
@@ -376,13 +376,14 @@ function show(name){
   document.querySelectorAll("#tabs .btn").forEach(b=>b.classList.toggle("on", b.dataset.v===name));
   document.querySelectorAll("#topNav a").forEach(a=>a.classList.toggle("active", a.dataset.v===name));
   document.querySelectorAll("#bottomNav a").forEach(a=>a.classList.toggle("active", a.dataset.v===name));
-  ({home:renderHome,words:renderWords,quiz:renderQuiz,review:renderReview,speaking:renderSpeaking,dash:renderDash,admin:renderAdmin})[name]();
+  ({home:renderHome,words:renderWords,quiz:renderQuiz,review:renderReview,speaking:renderSpeaking,dash:renderDash})[name]();
 }
 
 function renderHome(){
   const d=DB.daily[today()]||{};
   document.getElementById("view-home").innerHTML=`
   <div class="card"><h2>今日学习概览</h2><p class="muted">日期：${today()}</p>
+  <p class="muted">新词由老师每天更新，刷新即可同步</p>
   <div class="grid">
     <div class="stat"><div class="n">${DB.words.length}</div><div class="l">词库总量</div></div>
     <div class="stat"><div class="n">${DB.words.filter(w=>w.batch_date===today()).length}</div><div class="l">今日新词</div></div>
@@ -393,11 +394,11 @@ function renderHome(){
     <button class="btn" onclick="show('quiz')">开始新词测验</button>
     <button class="btn warn" onclick="show('review')">记忆曲线复习</button>
     <button class="btn ok" onclick="show('speaking')">口语对话练习</button>
-    <button class="btn ghost" onclick="show('admin')">录入今日单词</button>
+    
   </div></div>
   <div class="card"><h3>使用说明</h3>
   <ol class="muted" style="line-height:1.7">
-    <li>在「录入/管理」批量粘贴今日英文单词（每行一个），提交后自动尝试补充词性/释义/搭配/例句。</li>
+    <li>每天把新词发给老师；老师更新后，刷新本站即可同步到词库。</li>
     <li>做「新词测验」巩固当天内容，交卷后自动评分批阅。</li>
     <li>按 SM-2 记忆曲线做「记忆复习」，只考到期卡片。</li>
     <li>「口语练习」围绕目标词开口说（建议 Chrome/Edge），系统会指出语法/发音问题。</li>
@@ -643,202 +644,7 @@ function renderDash(){
   <div class="card"><h3>最近口语</h3>${DB.speaking.slice(0,8).map(q=>`<div>${esc(q.created)} · <strong>${q.score}</strong> 分 · 词：${esc(q.words||"")}</div>`).join("")||"暂无"}</div>`;
 }
 
-function needsEnrich(w){
-  if(!w) return true;
-  return !(w.definition_en && w.definition_cn && w.pos && w.example && w.collocations);
-}
-function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-function setImportProgress(msg){
-  const el = document.getElementById("importProgress");
-  if(el) el.textContent = msg || "";
-}
-async function fetchJson(url){
-  const r = await fetch(url, { cache: "no-store" });
-  if(!r.ok) throw new Error("HTTP " + r.status);
-  return r.json();
-}
-function pickCollocations(entry, example){
-  const bits = [];
-  try {
-    const meanings = entry && entry.meanings || [];
-    meanings.slice(0,2).forEach(m => {
-      (m.definitions||[]).slice(0,2).forEach(d => {
-        (d.synonyms||[]).slice(0,2).forEach(s => bits.push(s));
-      });
-      (m.synonyms||[]).slice(0,2).forEach(s => bits.push(s));
-    });
-  } catch(_){}
-  if(example){
-    const clipped = String(example).replace(/\s+/g," ").trim();
-    if(clipped) bits.push(clipped.length>80 ? clipped.slice(0,77)+"..." : clipped);
-  }
-  const seen = new Set();
-  const out = [];
-  bits.forEach(b => {
-    const k = String(b).toLowerCase();
-    if(!k || seen.has(k)) return;
-    seen.add(k); out.push(String(b));
-  });
-  return out.slice(0,4).join("; ");
-}
-async function translateToZh(text){
-  const q = String(text||"").trim();
-  if(!q) return "";
-  try {
-    const url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(q.slice(0,200)) + "&langpair=en|zh-CN";
-    const data = await fetchJson(url);
-    const translated = data && data.responseData && data.responseData.translatedText;
-    if(!translated) return "";
-    if(translated.toLowerCase() === q.toLowerCase()) return "";
-    return translated.trim();
-  } catch(e){
-    return "";
-  }
-}
-async function enrichFromDictionary(word){
-  const result = { phonetic:"", pos:"", definition_en:"", definition_cn:"", example:"", collocations:"" };
-  const q = String(word||"").trim();
-  if(!q) return result;
-  const candidates = [q];
-  if(/\s/.test(q)){
-    const parts = q.split(/\s+/).filter(Boolean);
-    if(parts.length) candidates.push(parts[parts.length-1]);
-  }
-  let entry = null;
-  for(const cand of candidates){
-    try {
-      const data = await fetchJson("https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(cand.toLowerCase()));
-      if(Array.isArray(data) && data[0]){ entry = data[0]; break; }
-    } catch(e){}
-  }
-  if(entry){
-    result.phonetic = entry.phonetic || ((entry.phonetics||[]).map(p=>p.text).find(Boolean) || "");
-    const meaning = (entry.meanings||[])[0] || {};
-    result.pos = meaning.partOfSpeech || "";
-    const def0 = ((meaning.definitions||[])[0]) || {};
-    result.definition_en = def0.definition || "";
-    result.example = def0.example || "";
-    if(!result.example){
-      for(const mm of (entry.meanings||[])){
-        for(const d of (mm.definitions||[])){
-          if(d.example){ result.example = d.example; break; }
-        }
-        if(result.example) break;
-      }
-    }
-    result.collocations = pickCollocations(entry, result.example);
-  }
-  result.definition_cn = await translateToZh(q);
-  if(!result.definition_cn && result.definition_en){
-    await sleep(250);
-    result.definition_cn = await translateToZh(result.definition_en);
-  }
-  return result;
-}
-async function enrichWordObj(w){
-  if(!needsEnrich(w)) return w;
-  const info = await enrichFromDictionary(w.word);
-  const patch = {
-    word: w.word,
-    phonetic: w.phonetic || info.phonetic || "",
-    pos: w.pos || info.pos || "",
-    definition_en: w.definition_en || info.definition_en || "",
-    definition_cn: w.definition_cn || info.definition_cn || "",
-    example: w.example || info.example || "",
-    collocations: w.collocations || info.collocations || "",
-    batch_date: w.batch_date,
-  };
-  return addWordObj(DB, patch, true) || w;
-}
-function renderAdmin(){
-  document.getElementById("view-admin").innerHTML=`
-  <div class="card">
-    <h2>批量导入英文单词</h2>
-    <p class="muted">只贴英文单词（每行一个）。提交后将自动尝试补充词性、释义、搭配与例句；若网络失败可把单词发给老师手动补全。</p>
-    <p class="muted">也支持词组，例如 <code>take into account</code>。以 <code>#</code> 开头的行会被忽略。</p>
-    <div class="field"><label>批次日期</label><input id="bbatch" type="date" value="${today()}"/></div>
-    <div class="field"><label>英文单词列表</label>
-      <textarea id="bulk" placeholder="analyse&#10;approach&#10;take into account&#10;significant" style="min-height:180px"></textarea>
-    </div>
-    <button type="button" class="btn" id="btnImport">导入并自动补充</button>
-    <p class="muted" id="importProgress" style="margin-top:10px"></p>
-  </div>
-  <div class="card"><h3>最近单词</h3>
-  <div style="overflow:auto"><table class="table"><thead><tr><th>单词</th><th>词性</th><th>中文</th><th>搭配</th><th>批次</th><th></th></tr></thead>
-  <tbody>${DB.words.slice().reverse().slice(0,50).map(w=>`<tr>
-    <td><strong>${esc(w.word)}</strong></td>
-    <td>${esc(w.pos||"—")}</td>
-    <td>${esc(w.definition_cn||"（待补充）")}</td>
-    <td class="muted">${esc(w.collocations||"—")}</td>
-    <td>${esc(w.batch_date||"")}</td>
-    <td><button type="button" class="btn bad sm" data-del="${w.id}">删除</button></td>
-  </tr>`).join("")}</tbody></table></div></div>`;
-  const btn = document.getElementById("btnImport");
-  if(btn) btn.onclick = adminImport;
-  document.querySelectorAll("button[data-del]").forEach(b=>{
-    b.onclick = () => adminDel(+b.dataset.del);
-  });
-}
-async function adminImport(){
-  const batch = (document.getElementById("bbatch")||{}).value || today();
-  const raw = (document.getElementById("bulk")||{}).value || "";
-  const btn = document.getElementById("btnImport");
-  const lines = raw.split(String.fromCharCode(10)).map(l=>l.trim()).filter(l=>l && !l.startsWith("#"));
-  const words = [];
-  const seen = new Set();
-  lines.forEach(line=>{
-    const word = line.split("|")[0].trim();
-    if(!word) return;
-    const key = word.toLowerCase();
-    if(seen.has(key)) return;
-    seen.add(key);
-    words.push(word);
-  });
-  if(!words.length){ toast("请先粘贴英文单词"); return; }
-  if(btn) btn.disabled = true;
-  let added=0, updated=0;
-  const targets = [];
-  words.forEach(word=>{
-    const before = DB.words.some(w=>w.word.toLowerCase()===word.toLowerCase());
-    const obj = addWordObj(DB, { word, batch_date: batch }, true);
-    if(before) updated++; else added++;
-    if(obj) targets.push(obj);
-  });
-  save(DB);
-  setImportProgress("已写入 "+words.length+" 个词，开始自动补充…");
-  let enriched=0, failed=0;
-  for(let i=0; i<targets.length; i++){
-    const w = targets[i];
-    setImportProgress("正在补充第 "+(i+1)+"/"+targets.length+" 个："+w.word);
-    try {
-      if(needsEnrich(w)){
-        await enrichWordObj(w);
-        enriched++;
-      }
-    } catch(e){
-      failed++;
-      console.warn("enrich failed", w.word, e);
-    }
-    save(DB);
-    if(i < targets.length-1) await sleep(450);
-  }
-  save(DB);
-  setImportProgress("完成：新增 "+added+"，已存在 "+updated+"，尝试补充 "+enriched+(failed?"，失败 "+failed:"")+"。");
-  toast("导入完成，已尝试自动补充释义");
-  if(btn) btn.disabled = false;
-  const bulk = document.getElementById("bulk");
-  if(bulk) bulk.value = "";
-  renderAdmin();
-  setImportProgress("最近一次：新增 "+added+"，已存在 "+updated+"，补充 "+enriched+(failed?"，失败 "+failed:""));
-}
-function adminDel(id){
-  if(!confirm("确认删除？")) return;
-  DB.words = DB.words.filter(w=>w.id!==id);
-  delete DB.cards[id];
-  save(DB);
-  toast("已删除");
-  renderAdmin();
-}
+
 
 
 async function syncRemoteWords(){
