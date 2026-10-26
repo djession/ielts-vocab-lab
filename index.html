@@ -239,12 +239,13 @@ function addWordObj(db, w, silent){
   if(existing){
     Object.assign(existing, { phonetic:w.phonetic||existing.phonetic, definition_en:w.definition_en||existing.definition_en,
       definition_cn:w.definition_cn||existing.definition_cn, example:w.example||existing.example, pos:w.pos||existing.pos,
+      collocations:w.collocations||existing.collocations||"",
       batch_date:w.batch_date||existing.batch_date });
     if(!silent) save(db); return existing;
   }
   const id = (db.words.reduce((m,x)=>Math.max(m,x.id),0)||0)+1;
   const obj = { id, word, phonetic:w.phonetic||"", definition_en:w.definition_en||"", definition_cn:w.definition_cn||"",
-    example:w.example||"", pos:w.pos||"", batch_date:w.batch_date||today(), created_at:now() };
+    example:w.example||"", pos:w.pos||"", collocations:w.collocations||"", batch_date:w.batch_date||today(), created_at:now() };
   db.words.push(obj);
   db.cards[id] = { ease:2.5, interval:0, reps:0, next:today(), last:null };
   if(!silent) save(db); return obj;
@@ -396,7 +397,7 @@ function renderHome(){
   </div></div>
   <div class="card"><h3>使用说明</h3>
   <ol class="muted" style="line-height:1.7">
-    <li>在「录入/管理」添加或批量导入今日单词。</li>
+    <li>在「录入/管理」批量粘贴今日英文单词（每行一个），词性/释义/搭配由老师补充。</li>
     <li>做「新词测验」巩固当天内容，交卷后自动评分批阅。</li>
     <li>按 SM-2 记忆曲线做「记忆复习」，只考到期卡片。</li>
     <li>「口语练习」围绕目标词开口说（建议 Chrome/Edge），系统会指出语法/发音问题。</li>
@@ -407,10 +408,10 @@ function renderHome(){
 function renderWords(){
   const rows=DB.words.slice().reverse().map(w=>{
     const c=DB.cards[w.id]||{};
-    return `<tr><td><strong>${esc(w.word)}</strong></td><td class="muted">${esc(w.phonetic)}</td><td>${esc(w.pos)}</td><td>${esc(w.definition_cn)}</td><td>${esc(w.batch_date||"")}</td><td>${esc(c.next||"")}</td></tr>`;
+    return `<tr><td><strong>${esc(w.word)}</strong></td><td class="muted">${esc(w.phonetic)}</td><td>${esc(w.pos)}</td><td>${esc(w.definition_cn)}</td><td class="muted">${esc(w.collocations||"")}</td><td>${esc(w.batch_date||"")}</td><td>${esc(c.next||"")}</td></tr>`;
   }).join("");
   document.getElementById("view-words").innerHTML=`<div class="card"><h2>词库</h2><p class="muted">共 ${DB.words.length} 个单词（保存在本机浏览器）</p>
-  <div style="overflow:auto"><table class="table"><thead><tr><th>单词</th><th>音标</th><th>词性</th><th>中文</th><th>批次</th><th>下次复习</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  <div style="overflow:auto"><table class="table"><thead><tr><th>单词</th><th>音标</th><th>词性</th><th>中文</th><th>搭配</th><th>批次</th><th>下次复习</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 
 let quizState=null;
@@ -476,9 +477,14 @@ function submitQuiz(){
   const box=document.getElementById(resId); box.classList.remove("hidden");
   box.innerHTML=`<h2>批阅结果</h2><div class="score-big">${score} 分</div>
     <p class="muted">${correct}/${results.length} 正确 · ${esc(summary)}</p>
-    ${results.map(x=>`<div class="result-item ${x.is_correct?"ok":"bad"}"><strong>${esc(x.word)}</strong>
+    ${results.map(x=>{
+      const w=DB.words.find(ww=>ww.id===x.word_id);
+      const colo=w&&w.collocations?`<div class="muted">常见搭配：${esc(w.collocations)}</div>`:"";
+      const ex=w&&w.example?`<div class="muted">例句：${esc(w.example)}</div>`:"";
+      return `<div class="result-item ${x.is_correct?"ok":"bad"}"><strong>${esc(x.word)}</strong>
       <span class="pill ${x.is_correct?"ok":"bad"}">${x.is_correct?"正确":"错误"}</span>
-      <div class="muted">你的答案：${esc(x.user_answer)||"（空）"}</div><div>${esc(x.feedback)}</div></div>`).join("")}
+      <div class="muted">你的答案：${esc(x.user_answer)||"（空）"}</div><div>${esc(x.feedback)}</div>${colo}${ex}</div>`;
+    }).join("")}
     <div class="row" style="margin-top:12px"><button class="btn ghost" onclick="show('${quizState.kind==="new"?"quiz":"review"}')">再测一次</button>
     <button class="btn" onclick="show('dash')">查看每日评分</button></div>`;
   toast("成绩已计入今日综合分");
@@ -639,52 +645,56 @@ function renderDash(){
 
 function renderAdmin(){
   document.getElementById("view-admin").innerHTML=`
-  <div class="card"><h2>添加单词</h2>
-  <div class="grid">
-    <div class="field"><label>单词 *</label><input id="aw"/></div>
-    <div class="field"><label>音标</label><input id="aph"/></div>
-    <div class="field"><label>词性</label><input id="apos"/></div>
-    <div class="field"><label>批次日期</label><input id="abatch" type="date" value="${today()}"/></div>
+  <div class="card">
+    <h2>批量导入英文单词</h2>
+    <p class="muted">只贴英文单词（每行一个），词性、含义、搭配、例句由老师补充。</p>
+    <p class="muted">也支持词组，例如 <code>take into account</code>。以 <code>#</code> 开头的行会被忽略。</p>
+    <div class="field"><label>批次日期</label><input id="bbatch" type="date" value="${today()}"/></div>
+    <div class="field"><label>英文单词列表</label>
+      <textarea id="bulk" placeholder="analyse&#10;approach&#10;take into account&#10;significant" style="min-height:180px"></textarea>
+    </div>
+    <button type="button" class="btn" id="btnImport">导入</button>
   </div>
-  <div class="field"><label>中文释义</label><input id="acn"/></div>
-  <div class="field"><label>英文释义</label><input id="aen"/></div>
-  <div class="field"><label>例句</label><input id="aex"/></div>
-  <button class="btn" onclick="adminAdd()">保存单词</button></div>
-  <div class="card"><h3>批量导入</h3>
-  <p class="muted">每行：<code>word | 中文</code> 或 <code>word | phonetic | 中文 | 英文 | pos | example</code></p>
-  <div class="field"><label>批次日期</label><input id="bbatch" type="date" value="${today()}"/></div>
-  <div class="field"><textarea id="bulk" placeholder="analyse | 分析"></textarea></div>
-  <button class="btn" onclick="adminImport()">导入</button></div>
   <div class="card"><h3>最近单词</h3>
-  <div style="overflow:auto"><table class="table"><thead><tr><th>单词</th><th>中文</th><th>批次</th><th></th></tr></thead>
-  <tbody>${DB.words.slice().reverse().slice(0,40).map(w=>`<tr><td><strong>${esc(w.word)}</strong></td><td>${esc(w.definition_cn)}</td><td>${esc(w.batch_date||"")}</td>
-  <td><button class="btn bad sm" onclick="adminDel(${w.id})">删除</button></td></tr>`).join("")}</tbody></table></div></div>`;
-}
-function adminAdd(){
-  const w=document.getElementById("aw").value;
-  if(!w.trim()){ toast("请填写单词"); return; }
-  addWordObj(DB,{ word:w, phonetic:document.getElementById("aph").value, pos:document.getElementById("apos").value,
-    definition_cn:document.getElementById("acn").value, definition_en:document.getElementById("aen").value,
-    example:document.getElementById("aex").value, batch_date:document.getElementById("abatch").value||today()});
-  toast("已保存"); renderAdmin();
+  <div style="overflow:auto"><table class="table"><thead><tr><th>单词</th><th>词性</th><th>中文</th><th>搭配</th><th>批次</th><th></th></tr></thead>
+  <tbody>${DB.words.slice().reverse().slice(0,50).map(w=>`<tr>
+    <td><strong>${esc(w.word)}</strong></td>
+    <td>${esc(w.pos||"—")}</td>
+    <td>${esc(w.definition_cn||"（待老师补充）")}</td>
+    <td class="muted">${esc(w.collocations||"—")}</td>
+    <td>${esc(w.batch_date||"")}</td>
+    <td><button type="button" class="btn bad sm" data-del="${w.id}">删除</button></td>
+  </tr>`).join("")}</tbody></table></div></div>`;
+  const btn = document.getElementById("btnImport");
+  if(btn) btn.onclick = adminImport;
+  document.querySelectorAll("button[data-del]").forEach(b=>{
+    b.onclick = () => adminDel(+b.dataset.del);
+  });
 }
 function adminImport(){
-  const batch=document.getElementById("bbatch").value||today();
-  let added=0, updated=0;
-  document.getElementById("bulk").value.split(String.fromCharCode(10)).forEach(line=>{
-    line=line.trim(); if(!line||line.startsWith("#")) return;
-    const parts=line.split("|").map(s=>s.trim());
-    const before=DB.words.some(w=>w.word.toLowerCase()===parts[0].toLowerCase());
-    if(parts.length===1) addWordObj(DB,{word:parts[0],batch_date:batch});
-    else if(parts.length===2) addWordObj(DB,{word:parts[0],definition_cn:parts[1],batch_date:batch});
-    else addWordObj(DB,{word:parts[0],phonetic:parts[1]||"",definition_cn:parts[2]||"",definition_en:parts[3]||"",pos:parts[4]||"",example:parts[5]||"",batch_date:batch});
+  const batch = (document.getElementById("bbatch")||{}).value || today();
+  const raw = (document.getElementById("bulk")||{}).value || "";
+  let added=0, updated=0, skipped=0;
+  raw.split(String.fromCharCode(10)).forEach(line=>{
+    line = line.trim();
+    if(!line || line.startsWith("#")) { if(line) skipped++; return; }
+    // English-only: take text before optional | if user pastes old format, keep first field only
+    const word = line.split("|")[0].trim();
+    if(!word){ skipped++; return; }
+    const before = DB.words.some(w=>w.word.toLowerCase()===word.toLowerCase());
+    addWordObj(DB, { word, batch_date: batch });
     if(before) updated++; else added++;
   });
-  toast(`导入完成：新增 ${added}，更新 ${updated}`); renderAdmin();
+  toast(`导入完成：新增 ${added}，已存在 ${updated}` + (skipped?`，跳过 ${skipped}`:""));
+  renderAdmin();
 }
 function adminDel(id){
   if(!confirm("确认删除？")) return;
-  DB.words=DB.words.filter(w=>w.id!==id); delete DB.cards[id]; save(DB); toast("已删除"); renderAdmin();
+  DB.words = DB.words.filter(w=>w.id!==id);
+  delete DB.cards[id];
+  save(DB);
+  toast("已删除");
+  renderAdmin();
 }
 
 
