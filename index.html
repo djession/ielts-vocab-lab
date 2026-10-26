@@ -151,7 +151,7 @@ textarea { min-height: 110px; resize: vertical; font-family: inherit; }
     <h2>雅思单词馆</h2>
     <p class="muted">IELTS Vocab Lab · 请输入访问码</p>
     <div class="field"><label>访问码 PIN</label><input id="pin" type="password" placeholder="输入 PIN"/></div>
-    <button class="btn" style="width:100%" onclick="doLogin()">进入</button>
+    <button type="button" class="btn" id="btnLogin" style="width:100%">进入</button>
     <p id="loginErr" style="color:var(--bad)"></p>
   </div>
 </div>
@@ -294,9 +294,21 @@ function applyReview(word_id, quality){
 }
 
 function doLogin(){
-  const p=document.getElementById("pin").value.trim();
-  if(p!==PIN){ document.getElementById("loginErr").textContent="访问码错误"; return; }
-  DB.authed=true; save(DB); enterApp(); syncRemoteWords();
+  try {
+    const el = document.getElementById("pin");
+    const p = (el && el.value ? el.value : "").trim();
+    const err = document.getElementById("loginErr");
+    if(p !== PIN){ if(err) err.textContent = "访问码错误"; return; }
+    if(err) err.textContent = "";
+    DB.authed = true;
+    save(DB);
+    enterApp();
+    syncRemoteWords();
+  } catch (e) {
+    const err = document.getElementById("loginErr");
+    if(err) err.textContent = "登录失败：" + (e && e.message ? e.message : e);
+    console.error(e);
+  }
 }
 function logout(){ DB.authed=false; save(DB); location.reload(); }
 
@@ -621,8 +633,7 @@ function adminAdd(){
 function adminImport(){
   const batch=document.getElementById("bbatch").value||today();
   let added=0, updated=0;
-  document.getElementById("bulk").value.split("
-").forEach(line=>{
+  document.getElementById("bulk").value.split(String.fromCharCode(10)).forEach(line=>{
     line=line.trim(); if(!line||line.startsWith("#")) return;
     const parts=line.split("|").map(s=>s.trim());
     const before=DB.words.some(w=>w.word.toLowerCase()===parts[0].toLowerCase());
@@ -638,7 +649,6 @@ function adminDel(id){
   DB.words=DB.words.filter(w=>w.id!==id); delete DB.cards[id]; save(DB); toast("已删除"); renderAdmin();
 }
 
-document.getElementById("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") doLogin(); });
 
 async function syncRemoteWords(){
   try {
@@ -666,6 +676,14 @@ async function syncRemoteWords(){
     if(n) toast('已从词库同步 '+n+' 个新词');
   } catch(e){}
 }
+
+
+(function bindLogin(){
+  const pin = document.getElementById("pin");
+  const btn = document.getElementById("btnLogin");
+  if(btn) btn.addEventListener("click", function(e){ e.preventDefault(); doLogin(); });
+  if(pin) pin.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); doLogin(); } });
+})();
 
 if(DB.authed){ enterApp(); syncRemoteWords().then(()=>{ try{renderHome()}catch(e){} }); } else { syncRemoteWords(); }
 </script>
