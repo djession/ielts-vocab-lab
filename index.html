@@ -185,15 +185,52 @@ function now(){ return new Date().toISOString(); }
 function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(t._x); t._x=setTimeout(()=>t.classList.remove("show"),2600); }
 function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c])); }
 
-function load(){
-  const raw = localStorage.getItem(KEY);
-  if(raw){ try { return JSON.parse(raw); } catch(e){} }
-  const db = { words:[], cards:{}, quizzes:[], speaking:[], daily:{}, authed:false };
-  SEED.forEach(w => addWordObj(db, {...w, batch_date:"2026-10-26"}, true));
-  save(db); return db;
+let memoryStore = null;
+let storageOk = true;
+function safeGet(key){
+  try { return localStorage.getItem(key); }
+  catch(e){ storageOk = false; return memoryStore; }
 }
-function save(db){ localStorage.setItem(KEY, JSON.stringify(db)); }
-let DB = load();
+function safeSet(key, val){
+  try { localStorage.setItem(key, val); memoryStore = val; return true; }
+  catch(e){ storageOk = false; memoryStore = val; return false; }
+}
+function emptyDb(){ return { words:[], cards:{}, quizzes:[], speaking:[], daily:{}, authed:false }; }
+function load(){
+  try {
+    const raw = safeGet(KEY);
+    if(raw){
+      try {
+        const parsed = JSON.parse(raw);
+        if(parsed && typeof parsed === "object"){
+          parsed.words = parsed.words || [];
+          parsed.cards = parsed.cards || {};
+          parsed.quizzes = parsed.quizzes || [];
+          parsed.speaking = parsed.speaking || [];
+          parsed.daily = parsed.daily || {};
+          return parsed;
+        }
+      } catch(e){}
+    }
+    const db = emptyDb();
+    SEED.forEach(w => addWordObj(db, {...w, batch_date:"2026-10-26"}, true));
+    save(db);
+    return db;
+  } catch(e){
+    console.error("load failed", e);
+    storageOk = false;
+    const db = emptyDb();
+    try { SEED.forEach(w => addWordObj(db, {...w, batch_date:"2026-10-26"}, true)); } catch(_){}
+    return db;
+  }
+}
+function save(db){
+  try { safeSet(KEY, JSON.stringify(db)); }
+  catch(e){ storageOk = false; console.warn("save failed", e); }
+}
+let DB;
+try { DB = load(); }
+catch(e){ storageOk = false; DB = emptyDb(); console.error(e); }
 
 function addWordObj(db, w, silent){
   const word = (w.word||"").trim();
@@ -299,7 +336,8 @@ function doLogin(){
     const p = (el && el.value ? el.value : "").trim();
     const err = document.getElementById("loginErr");
     if(p !== PIN){ if(err) err.textContent = "访问码错误"; return; }
-    if(err) err.textContent = "";
+    if(err) err.textContent = (typeof storageOk !== "undefined" && !storageOk)
+      ? "已进入（当前浏览器无法持久保存，刷新后需重新登录）" : "";
     DB.authed = true;
     save(DB);
     enterApp();
@@ -677,6 +715,14 @@ async function syncRemoteWords(){
   } catch(e){}
 }
 
+
+
+try {
+  if(!storageOk){
+    const err = document.getElementById("loginErr");
+    if(err && !err.textContent) err.textContent = "提示：本地存储不可用，仍可登录，但刷新后进度可能丢失";
+  }
+} catch(_){}
 
 (function bindLogin(){
   const pin = document.getElementById("pin");
