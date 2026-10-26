@@ -1,5 +1,255 @@
 [
   {
+    "word": "frequently",
+    "phonetic": "/ˈfriːkwəntli/",
+    "definition_cn": "频繁地；经常地",
+    "definition_en": "regularly or often",
+    "example": "This error occurs frequently in first drafts of essays.",
+    "pos": "adv.",
+    "collocations": "occur frequently; frequently asked; more/less frequently",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "prior",
+    "phonetic": "/ˈpraɪə(r)/",
+    "definition_cn": "先前的；优先的",
+    "definition_en": "existing or coming before in time or order; previous",
+    "example": "Applicants need prior experience in academic writing.",
+    "pos": "adj.",
+    "collocations": "prior to; prior experience/knowledge; prior approval",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "prematurely",
+    "phonetic": "/ˈpremətʃəli/",
+    "definition_cn": "过早地；草率地",
+    "definition_en": "before the proper or expected time",
+    "example": "It is unwise to conclude prematurely before all evidence is reviewed.",
+    "pos": "adv.",
+    "collocations": "die prematurely; conclude prematurely; prematurely announce",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "approaching",
+    "phonetic": "/əˈprəʊtʃɪŋ/",
+    "definition_cn": "临近的；接近的；正在靠近",
+    "definition_en": "coming nearer in time or space; present participle of approach",
+    "example": "With the approaching deadline, the team worked overtime.",
+    "pos": "adj./v.",
+    "collocations": "approaching deadline; approaching the problem; rapidly approaching",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "anxiety",
+    "phonetic": "/æŋˈzaɪəti/",
+    "definition_cn": "焦虑；担忧",
+    "definition_en": "a feeling of worry, nervousness, or unease",
+    "example": "Exam anxiety can affect even well-prepared candidates.",
+    "pos": "n.",
+    "collocations": "anxiety about/over; cause/reduce anxiety; high levels of anxiety",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "dead weight",
+    "phonetic": "/ˌded ˈweɪt/",
+    "definition_cn": "沉重负担；累赘；阻力",
+    "definition_en": "a heavy burden; something that makes progress difficult",
+    "example": "Excess bureaucracy can become a dead weight on innovation.",
+    "pos": "n.",
+    "collocations": "a dead weight on; become a dead weight; carry a dead weight",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "behalf",
+    "phonetic": "/bɪˈhɑːf/",
+    "definition_cn": "利益；方面（常用于 on behalf of）",
+    "definition_en": "used in 'on behalf of' to mean as a representative of someone",
+    "example": "She accepted the award on behalf of the whole research team.",
+    "pos": "n.",
+    "collocations": "on behalf of; on sb's behalf; speak/act on behalf of",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "outlast",
+    "phonetic": "/ˌaʊtˈlɑːst/",
+    "definition_cn": "比……持久；比……经久耐用",
+    "definition_en": "to last longer than something else",
+    "example": "Well-built infrastructure can outlast short-term political cycles.",
+    "pos": "v.",
+    "collocations": "outlast competitors; outlast a crisis; outlast expectations",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "outlive",
+    "phonetic": "/ˌaʊtˈlɪv/",
+    "definition_cn": "比……活得长；比……经久",
+    "definition_en": "to live or last longer than someone or something",
+    "example": "Some technologies outlive the companies that created them.",
+    "pos": "v.",
+    "collocations": "outlive sb/sth; outlive its usefulness; outlive expectations",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "meant",
+    "phonetic": "/ment/",
+    "definition_cn": "意味着；打算（mean 的过去式/过去分词）",
+    "definition_en": "past tense/past participle of mean: intended or signified",
+    "example": "The policy was meant to reduce inequality, not increase it.",
+    "pos": "v. (past of mean)",
+    "collocations": "meant to do; meant that; was meant for",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "decades",
+    "phonetic": "/ˈdekeɪdz/",
+    "definition_cn": "数十年（decade 的复数）",
+    "definition_en": "plural of decade: periods of ten years",
+    "example": "Air quality has improved over recent decades in many cities.",
+    "pos": "n.",
+    "collocations": "for decades; over/in recent decades; lasting decades",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "particular",
+    "phonetic": "/pəˈtɪkjələ(r)/",
+    "definition_cn": "特定的；特别的；讲究的",
+    "definition_en": "used to single out an individual member of a group; special or specific",
+    "example": "One particular factor explains most of the variation.",
+    "pos": "adj.",
+    "collocations": "in particular; a particular case; of particular importance",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "underneath",
+    "phonetic": "/ˌʌndəˈniːθ/",
+    "definition_cn": "在……下面；在下方",
+    "definition_en": "situated directly below; on the lower side",
+    "example": "Underneath the optimistic report were several serious risks.",
+    "pos": "prep./adv.",
+    "collocations": "underneath the surface; lie underneath; from underneath",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "convince",
+    "phonetic": "/kənˈvɪns/",
+    "definition_cn": "使确信；说服",
+    "definition_en": "to make someone believe that something is true",
+    "example": "The data convinced policymakers that reform was necessary.",
+    "pos": "v.",
+    "collocations": "convince sb of/that; be convinced that; fail to convince",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "boundary",
+    "phonetic": "/ˈbaʊndri/",
+    "definition_cn": "边界；分界线；界限",
+    "definition_en": "a real or imagined line that marks the limit of something",
+    "example": "There is a fine boundary between confidence and arrogance.",
+    "pos": "n.",
+    "collocations": "cross/push the boundary; national boundary; clear boundaries",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "presents",
+    "phonetic": "/prɪˈzents/",
+    "definition_cn": "呈现；提出；造成（present 的第三人称单数）",
+    "definition_en": "third-person singular of present: to show, offer, or cause something to appear",
+    "example": "Climate change presents a major challenge to coastal cities.",
+    "pos": "v.",
+    "collocations": "presents a challenge/problem; presents evidence; presents an opportunity",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "conclusion",
+    "phonetic": "/kənˈkluːʒn/",
+    "definition_cn": "结论；结尾",
+    "definition_en": "a judgement reached after considering evidence; the end of something",
+    "example": "The study draws the conclusion that exercise improves concentration.",
+    "pos": "n.",
+    "collocations": "draw/reach a conclusion; come to the conclusion that; in conclusion",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "situation",
+    "phonetic": "/ˌsɪtʃuˈeɪʃn/",
+    "definition_cn": "情况；形势；处境",
+    "definition_en": "a set of circumstances in which one finds oneself",
+    "example": "In this situation, cooperation is more effective than competition.",
+    "pos": "n.",
+    "collocations": "in a situation; current/difficult situation; assess the situation",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "specific",
+    "phonetic": "/spəˈsɪfɪk/",
+    "definition_cn": "具体的；特定的；明确的",
+    "definition_en": "clearly defined or identified; relating to a particular thing",
+    "example": "Please give a specific example to support your argument.",
+    "pos": "adj.",
+    "collocations": "specific to; a specific example; be more specific",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "usefulness",
+    "phonetic": "/ˈjuːsfəlnəs/",
+    "definition_cn": "有用性；实用性",
+    "definition_en": "the quality of being helpful or practical",
+    "example": "Researchers debated the usefulness of the new survey method.",
+    "pos": "n.",
+    "collocations": "the usefulness of; practical usefulness; question/doubt the usefulness",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "achieve",
+    "phonetic": "/əˈtʃiːv/",
+    "definition_cn": "实现；达到；取得",
+    "definition_en": "to succeed in doing or reaching something by effort",
+    "example": "Students must work consistently to achieve high scores.",
+    "pos": "v.",
+    "collocations": "achieve a goal/aim; achieve success; hard to achieve",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "region",
+    "phonetic": "/ˈriːdʒən/",
+    "definition_cn": "地区；区域",
+    "definition_en": "an area of a country or the world with common features",
+    "example": "Unemployment remains high in the northern region.",
+    "pos": "n.",
+    "collocations": "in/across the region; coastal/remote region; regional differences",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "variety",
+    "phonetic": "/vəˈraɪəti/",
+    "definition_cn": "多样性；种类；变化",
+    "definition_en": "the quality of being different or diverse; a number of different things",
+    "example": "The course offers a variety of assessment methods.",
+    "pos": "n.",
+    "collocations": "a variety of; wide/great variety; variety in/of",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "convenient",
+    "phonetic": "/kənˈviːniənt/",
+    "definition_cn": "方便的；便利的",
+    "definition_en": "fitting in well with a person's needs or plans; easy to use",
+    "example": "Online banking is convenient for people who travel frequently.",
+    "pos": "adj.",
+    "collocations": "convenient for sb; at a convenient time; highly convenient",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "eventual consistency",
+    "phonetic": "/ɪˈventʃuəl kənˈsɪstənsi/",
+    "definition_cn": "最终一致性（各副本随时间最终达到一致）",
+    "definition_en": "a data state in which updates propagate over time until all replicas agree",
+    "example": "Distributed databases often trade strong consistency for eventual consistency.",
+    "pos": "n.",
+    "collocations": "achieve/guarantee eventual consistency; eventual consistency model",
+    "batch_date": "2026-10-26"
+  },
+  {
     "word": "paradigm",
     "phonetic": "",
     "definition_cn": "",
