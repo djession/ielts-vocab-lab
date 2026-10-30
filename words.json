@@ -1,5 +1,25 @@
 [
   {
+    "word": "consistency",
+    "phonetic": "/kənˈsɪstənsi/",
+    "definition_cn": "一致性；连贯性；黏稠度",
+    "definition_en": "the quality of always behaving or performing in a similar way; agreement between parts",
+    "example": "Consistency in daily practice is essential for language learners.",
+    "pos": "n.",
+    "collocations": "consistency of/in; maintain/ensure consistency; lack of consistency",
+    "batch_date": "2026-10-26"
+  },
+  {
+    "word": "eventual",
+    "phonetic": "/ɪˈventʃuəl/",
+    "definition_cn": "最终的；最后的",
+    "definition_en": "happening or existing at the end of a process or period of time",
+    "example": "The eventual outcome of the experiment surprised the researchers.",
+    "pos": "adj.",
+    "collocations": "eventual outcome/success/failure; the eventual winner; an eventual collapse",
+    "batch_date": "2026-10-26"
+  },
+  {
     "word": "frequently",
     "phonetic": "/ˈfriːkwəntli/",
     "definition_cn": "频繁地；经常地",
